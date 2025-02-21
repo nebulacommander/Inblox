@@ -1,3 +1,5 @@
+import { SpeedInsights } from "@vercel/speed-insights/next"
+
 import "@/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
@@ -11,7 +13,6 @@ import {
   SignedOut,
   UserButton
 } from '@clerk/nextjs'
-import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: "InBlox - AI Email Client",
