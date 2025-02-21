@@ -1,9 +1,9 @@
-import LinkAccountButton from '@/components/link-account-button';
-import React from 'react';
+import LinkAccountButton from "@/components/link-account-button";
+import React from "react";
 
 export default function Page(): React.JSX.Element {
   return (
-    <div className='text-center items-center justify-center flex flex-col h-screen'>
+    <div className="flex h-screen flex-col items-center justify-center text-center">
       <LinkAccountButton />
     </div>
   );

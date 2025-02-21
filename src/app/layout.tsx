@@ -1,4 +1,4 @@
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import "@/styles/globals.css";
 
@@ -11,8 +11,8 @@ import {
   SignInButton,
   SignedIn,
   SignedOut,
-  UserButton
-} from '@clerk/nextjs'
+  UserButton,
+} from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: "InBlox - AI Email Client",
@@ -29,7 +29,7 @@ export default function RootLayout({
         <body>
           <TRPCReactProvider>
             {children}
-            <SpeedInsights/>
+            <SpeedInsights />
           </TRPCReactProvider>
         </body>
       </html>
