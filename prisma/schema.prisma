@@ -17,6 +17,8 @@ model User {
     lastName     String
     imageUrl     String?
     accounts     Account[]
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
 }
 
 model Account {
@@ -25,5 +27,7 @@ model Account {
     accessToken  String  @unique
     emailAddress String
     name         String
-    user User @relation(fields: [userId], references: [id])
+    user         User    @relation(fields: [userId], references: [id])
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 }

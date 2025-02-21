@@ -28,20 +28,28 @@ export const GET = async (req: NextRequest) => {
       { status: 400 },  
     )
 
-  const accountDetails = await getAccountDetails(token.accessToken);
-  await db.account.upsert({
-    where: { id: token.accountId.toString() },
-    update: {
-      accessToken: token.accessToken,
-    },
-    create: {
-      id: token.accountId.toString(),
-      accessToken: token.accessToken,
-      userId,
-      emailAddress: accountDetails.email,
-      name: accountDetails.name,
-    },
-  })
-
-  return NextResponse.redirect(new URL("/mail", req.url));
+    try {
+      const accountDetails = await getAccountDetails(token.accessToken);
+      await db.account.upsert({
+        where: { id: token.accountId.toString() },
+        update: {
+          accessToken: token.accessToken,
+        },
+        create: {
+          id: token.accountId.toString(),
+          accessToken: token.accessToken,
+          userId,
+          emailAddress: accountDetails.email,
+          name: accountDetails.name,
+        },
+      });
+    
+      return NextResponse.redirect(new URL("/mail", req.url));
+    } catch (error) {
+      console.error("Database error:", error);
+      return NextResponse.json(
+        { message: "Failed to save account details" },
+        { status: 500 }
+      );
+    }
 };
