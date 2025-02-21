@@ -51,7 +51,12 @@ export const exchangeCodeForAccessToken = async (code: string) => {
       throw new Error("No data received from Aurinko");
     }
 
-    return response.data;
+    return response.data as {
+      accountId: string;
+      accessToken: string;
+      userId: string;
+      userSession: string;
+    }
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error("Aurinko API Error:", error.response?.data);
@@ -60,3 +65,25 @@ export const exchangeCodeForAccessToken = async (code: string) => {
     throw error;
   }
 };
+
+export const getAccountDetails = async (accessToken: string) => {
+  try {
+    const response = await axios.get("https://api.aurinko.io/v1/account", {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
+    return response.data as {
+      email: string,
+      name: string,
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Aurinko ACCOUNT DETAILS Error:", error.response?.data);
+      throw new Error(`Aurinko API Error: ${error.response?.data?.message || error.message}`);
+    } else {
+      console.log("Unexpected error fetching account details:", error);
+    }
+    throw error;
+  }
+}
