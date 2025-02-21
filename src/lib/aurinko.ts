@@ -34,7 +34,7 @@ export const getAurinkoAuthUrl = async (
 export const exchangeCodeForAccessToken = async (code: string) => {
   try {
     const response = await axios.post(
-      "https://api.aurinko.io/v1/account",
+      `https://api.aurinko.io/v1/auth/token/${code}`,
       {
         code,
         grantType: "authorization_code",
