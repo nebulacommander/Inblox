@@ -35,13 +35,12 @@ export const getAurinkoAuthUrl = async (serviceType: "Google" | "Office365") => 
   return `https://api.aurinko.io/v1/auth/authorize?${params.toString()}`;
 };
 
-export const exchangeCodeForAccessToken = async (code: string) => {
+export const exchangeCodeForAccessToken = async (handshake: string) => {
   try {
-    console.log("Exchanging code for token:", code);
+    console.log("Exchanging Clerk handshake for token");
     const response = await axios.post(
-      `https://api.aurinko.io/v1/auth/token/${code}`,
+      `https://api.aurinko.io/v1/auth/token/${encodeURIComponent(handshake)}`,
       {
-        code,
         grantType: "authorization_code",
       },
       {
