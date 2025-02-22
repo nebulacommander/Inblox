@@ -5,31 +5,32 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
   const { userId } = await auth();
-
-  if (!userId)
+  if (!userId) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
 
   const params = req.nextUrl.searchParams;
-  const status = params.get("status");
-  if (status != "success")
-    return NextResponse.json(
-      { message: "Failed to Link Account" },
-      { status: 400 },
-    );
-
-  // get the code to exchange for the accesss token
-  const code = params.get("code");
-  if (!code)
-    return NextResponse.json({ message: "No code provided" }, { status: 400 });
-  const token = await exchangeCodeForAccessToken(code);
-  if (!token)
-    return NextResponse.json(
-      { message: "Failed to exchange code for access token" },
-      { status: 400 },  
-    )
-
+  const handshake = params.get("__clerk_handshake");
+  
+  // Check for Clerk handshake first
+  if (handshake) {
     try {
+      const parts = handshake.split('.');
+      if (!parts[1]) throw new Error('Invalid handshake format');
+      const decodedHandshake = JSON.parse(
+        Buffer.from(parts[1], 'base64').toString()
+      );
+      console.log("Decoded handshake:", decodedHandshake);
+      
+      // Exchange handshake for token
+      const token = await exchangeCodeForAccessToken(handshake);
+      if (!token) {
+        throw new Error("Failed to exchange handshake for token");
+      }
+
       const accountDetails = await getAccountDetails(token.accessToken);
+      
+      // Update database
       await db.account.upsert({
         where: { id: token.accountId.toString() },
         update: {
@@ -43,13 +44,20 @@ export const GET = async (req: NextRequest) => {
           name: accountDetails.name,
         },
       });
-    
+
       return NextResponse.redirect(new URL("/mail", req.url));
     } catch (error) {
-      console.error("Database error:", error);
+      console.error("Error processing handshake:", error);
       return NextResponse.json(
-        { message: "Failed to save account details" },
+        { message: "Error processing handshake" },
         { status: 500 }
       );
     }
+  }
+
+  // If no handshake, return error
+  return NextResponse.json(
+    { message: "No valid handshake found" },
+    { status: 400 }
+  );
 };
