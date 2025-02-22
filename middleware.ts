@@ -5,6 +5,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
   "/forgot-password(.*)",
   "/reset-password(.*)",
+  "/api/aurinko/callback(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
